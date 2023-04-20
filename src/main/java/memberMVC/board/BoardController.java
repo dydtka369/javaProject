@@ -2,6 +2,7 @@ package memberMVC.board;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -32,7 +33,7 @@ public class BoardController extends HttpServlet {
    @Override
    public void init() throws ServletException {
       boardService = new BoardService();
-      articleVO = new ArticleVO();
+      articleVO = new ArticleVO(); 
    }
 
    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -47,6 +48,7 @@ public class BoardController extends HttpServlet {
       request.setCharacterEncoding("UTF-8");
       response.setContentType("text/html; charset=UTF-8");
       String nextPage = "";
+      PrintWriter out;
       String action = request.getPathInfo();
       System.out.println("요청 이름 : " + action);
       
@@ -80,14 +82,48 @@ public class BoardController extends HttpServlet {
         		 destDir.mkdir();
         		 //temp폴더의 파일을 글 번호 폴더로 이동
         		 FileUtils.moveFileToDirectory(srcFile, destDir, true);
-        		 srcFile.delete();
+        		 srcFile.delete(); 
         	 }
-        	 nextPage="/board/listArticles.do";
+        	 out = response.getWriter();
+        	 out.print("<script>");
+        	 out.print("alert('새글을 추가했습니다.');");
+        	 out.print("location.href='" + request.getContextPath()+"/board/listArticles.do';");
+        	 out.print("</script>");
+        	 return;
          }else if(action.equals("/viewArticle.do")) {
         	 String articleNo = request.getParameter("articleNo");
         	 articleVO = boardService.viewArticle(Integer.parseInt(articleNo));
         	 request.setAttribute("article", articleVO);
         	 nextPage = "/boardInfo/viewArticle.jsp";
+         }else if(action.equals("/modArticle.do")) {
+        	 Map<String, String> articleMap = upload(request, response);
+        	 int articleNo = Integer.parseInt(articleMap.get("articleNo"));
+        	 String title = articleMap.get("title");
+        	 String content = articleMap.get("content");
+        	 String imageFileName = articleMap.get("imageFileName");
+        	 articleVO.setArticleNo(articleNo);
+        	 articleVO.setParentNo(0);
+        	 articleVO.setId("son");
+        	 articleVO.setTitle(title);
+        	 articleVO.setContent(content);
+        	 articleVO.setImageFileName(imageFileName);
+        	 boardService.modArticle(articleVO);
+        	 //이미지를 첨부한 경우에만 수행
+        	 if(imageFileName != null && imageFileName.length() !=0) {
+        		 String originalFileName = articleMap.get("originalFileName");
+        		 File srcFile = new File(IMG_REPO +"\\temp\\" + imageFileName);
+        		 File destDir = new File(IMG_REPO + "\\" + articleNo);
+        		 destDir.mkdir();
+        		 FileUtils.moveFileToDirectory(srcFile, destDir, true);
+        		 File oldFile = new File(IMG_REPO + "\\" +articleNo+"\\" +originalFileName);
+        		 oldFile.delete();
+        	 }
+        	 out = response.getWriter();
+        	 out.print("<script>");
+        	 out.print("alert('새글을 수정했습니다.');");
+        	 out.print("location.href='" + request.getContextPath()+"/board/viewArticle.do?articleNo=" + articleNo +"';");
+        	 out.print("</script>");
+        	 return;
          }
          RequestDispatcher dispatcher = request.getRequestDispatcher(nextPage);
          dispatcher.forward(request, response);
