@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.apache.commons.io.FileUtils;
 
 import oracle.security.o3logon.a;
 
@@ -58,6 +59,7 @@ public class BoardController extends HttpServlet {
          }else if(action.equals("/articleForm.do")) {
         	 nextPage ="/boardInfo/articleForm.jsp";
          }else if(action.equals("/addArticle.do")) {
+        	 int articleNo = 0;
         	 Map<String, String> articleMap = upload(request, response);
         	 String title = articleMap.get("title");
         	 String content = articleMap.get("content");
@@ -68,6 +70,18 @@ public class BoardController extends HttpServlet {
         	 articleVO.setContent(content);
         	 articleVO.setImageFileName(imageFileName);
         	 boardService.addArticle(articleVO);
+        	 articleNo = boardService.addArticle(articleVO);
+        	 //새글 추가 시 이미지를 첨부한 경우에만 수행
+        	 if(imageFileName != null && imageFileName.length() != 0) {
+        		 //temp 폴더에 임시로 업로드된 파일 객체를 생성
+        		 File srcFile = new File(IMG_REPO + "\\temp\\" + imageFileName);
+        		 //새 글 추가된 글번호로 폴더를 생성
+        		 File destDir = new File(IMG_REPO + "\\" + articleNo);
+        		 destDir.mkdir();
+        		 //temp폴더의 파일을 글 번호 폴더로 이동
+        		 FileUtils.moveFileToDirectory(srcFile, destDir, true);
+        		 srcFile.delete();
+        	 }
         	 nextPage="/board/listArticles.do";
          }else if(action.equals("/viewArticle.do")) {
         	 String articleNo = request.getParameter("articleNo");
@@ -110,7 +124,7 @@ public class BoardController extends HttpServlet {
 					   }
 					   String fileName = fileItem.getName().substring(idx+1);
 					   articleMap.put(fileItem.getFieldName(), fileName);
-					   File uploadFile = new File(currentDirPath + "\\" + fileName);
+					   File uploadFile = new File(currentDirPath + "\\temp\\" + fileName);
 					   fileItem.write(uploadFile);
 				   }
 			   }

@@ -13,8 +13,8 @@ public class BoardService {
 		List<ArticleVO> articleList = boardDAO.selectAllArticles();
 		return articleList;
 	}
-	public void addArticle(ArticleVO articleVO) {
-		boardDAO.insertNewArticle(articleVO);
+	public int addArticle(ArticleVO articleVO) {
+		return boardDAO.insertNewArticle(articleVO);
 	}
 	
 	public ArticleVO viewArticle(int articleNo) {

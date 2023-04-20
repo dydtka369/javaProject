@@ -84,7 +84,7 @@ public class BoardDAO {
 	   return aNo;
    }
    	// 새글 추가
-   public void insertNewArticle(ArticleVO articleVO) {
+   public int insertNewArticle(ArticleVO articleVO) {
 	   int articleNo = getNewArticleNo();
 	   try {
 		   conn = dataFactory.getConnection();
@@ -108,6 +108,7 @@ public class BoardDAO {
 		   System.out.println("새글 추가 중 에러");
 		   e.printStackTrace();
 	}
+	   return articleNo;
    }
    //선택한 글 상세 내용
    public ArticleVO selectArticle(int articleNo) {
