@@ -176,4 +176,42 @@ public class BoardDAO {
 		   e.printStackTrace();
 	}
    }
+   //삭제할 글 번호 목록 가져오기
+   public List<Integer> selectRemovedArticles(int articleNo) {
+	   List<Integer> articleNoList =new ArrayList<Integer>();
+	   try {
+		   conn = dataFactory.getConnection();
+		   String query = "select aricleNo from boardtbl START WITH articleNo=?" +
+		   " CONNECT BY PRIOR articleNo = parentNo";
+		   pstmt = conn.prepareStatement(query);
+		   pstmt.setInt(1, articleNo);
+		   ResultSet rs = pstmt.executeQuery();
+		   while(rs.next()) {
+			   articleNo = rs.getInt("articleNo");
+			   articleNoList.add(articleNo);
+		   }
+		   pstmt.close();
+		   conn.close();
+	   }catch (Exception e) {
+		 System.out.println("삭제할 글 번호 목록 가져오기 중 에러");
+		 e.printStackTrace();
+	}
+	   return articleNoList;
+   }
+   //글 삭제 메서드
+   public void deleteArticle(int articleNo) {
+	   try {
+		   conn = dataFactory.getConnection();
+		   String query = "delete from boardtbl where articleNo in (select articleNo" +
+		   " from boardtbl START WITH articleNo=? CONNECT BY PRIOR articleNo = parentNo";
+		   pstmt = conn.prepareStatement(query);
+		   pstmt.setInt(1, articleNo);
+		   pstmt.executeUpdate();
+		   pstmt.close();
+		   conn.close();
+	   }catch (Exception e) {
+		System.out.println("글 삭제 중 에러");
+		e.printStackTrace();
+	}
+   }
 }

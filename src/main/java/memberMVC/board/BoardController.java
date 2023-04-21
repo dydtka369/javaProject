@@ -124,6 +124,10 @@ public class BoardController extends HttpServlet {
         	 out.print("location.href='" + request.getContextPath()+"/board/viewArticle.do?articleNo=" + articleNo +"';");
         	 out.print("</script>");
         	 return;
+         }else if(action.equals("/removeArticle.do")) {
+        	 int articleNo = Integer.parseInt(request.getParameter("articleNo"));
+        	 List<Integer> articleNoList = boardService.removeArticle(articleNo);
+        	 
          }
          RequestDispatcher dispatcher = request.getRequestDispatcher(nextPage);
          dispatcher.forward(request, response);

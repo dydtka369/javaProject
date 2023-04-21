@@ -53,6 +53,18 @@ request.setCharacterEncoding("utf-8");
       obj.action ="${contextPath}/board/viewArticle.do?articleNo=${article.articleNo}";
       obj.submit();
   }
+  function fn_remove_article(url, articleNo){
+	  let d__from = document.createElement("form");
+	  d_form.setAttribute("method","post");
+	  d_form.setAttribute("action",url);
+	  let articleNoInput=document.createElement("input");
+	  articleNoInput.setAttribute("type","hidden");
+	  articleNoInput.setAttribute("name","articleNo");
+	  articleNoInput.setAttribute("value",articleNo);
+	  d_form.appendChild(articleNoInput);
+	  document.body.appendChild(d_form);
+	  d_form.submit();
+  } 
 </script>
 </head>
 <body> 
