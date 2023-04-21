@@ -203,7 +203,7 @@ public class BoardDAO {
 	   try {
 		   conn = dataFactory.getConnection();
 		   String query = "delete from boardtbl where articleNo in (select articleNo" +
-		   " from boardtbl START WITH articleNo=? CONNECT BY PRIOR articleNo = parentNo";
+		   " from boardtbl START WITH articleNo=? CONNECT BY PRIOR articleNo = parentNo)";
 		   pstmt = conn.prepareStatement(query);
 		   pstmt.setInt(1, articleNo);
 		   pstmt.executeUpdate();

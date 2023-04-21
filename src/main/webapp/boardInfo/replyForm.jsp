@@ -14,7 +14,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>글쓰기 창</title>
+<title>답글 쓰기 창</title>
 <script src="http://code.jquery.com/jquery-latest.min.js"></script>
 <script type="text/javascript">
 //이미지 미리보기 구현
@@ -31,13 +31,17 @@
 	function toList(obj) {
 		obj.action="${contextPath}/board/listArticles.do";
 		obj.submit();
-	}
+	} 
 </script>
 </head>
 <body>
-	<h2 align="center">새글 쓰기</h2>
-	<form action="${contextPath}/board/addArticle.do" method="post" enctype="multipart/form-data">
-		<table align = "center">
+	<h2 align ="center">답글쓰기</h2>
+	<form name="frmReply" action="${contextPath}/board/addReply.do" method="post" enctype="multipart/form-data">
+		<table align ="center">
+			<tr>
+				<td align="right">글쓴이 :</td>
+				<td><input type="text" value="chulsu" disabled="disabled"></td>
+			</tr>
 			<tr>
 				<td align="right">글제목 : </td>
 				<td colspan="2"><input type="text" size="50" name="title"></td>
@@ -52,10 +56,11 @@
 				<td><img id ="preview" src="#" width="200" height="200"></td>
 			</tr>
 			<tr>
-				<td align="right">&nbsp;</td>
-				<td colspan="2">
-					<input type="submit" value="글쓰기">
-					<input type="button" value="목록보기" onclick= "toList(this.form)">
+				<td>
+					<input align="right" type="submit" value="답글반영하기">
+				</td>
+				<td>
+					<input aling="left" type="button" value="취소" onclick="toList(this.form)">
 				</td>
 			</tr>
 		</table>

@@ -31,4 +31,7 @@ public class BoardService {
 		return articleNoList;
 		
 	}
+	public int addReply(ArticleVO articleVO) {
+		return  boardDAO.insertNewArticle(articleVO);
+	}
 }
